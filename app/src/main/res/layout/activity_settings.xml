@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Settings">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:layout_editor_absoluteX="169dp"
+        tools:layout_editor_absoluteY="16dp">
+
+
+        <Button
+            android:id="@+id/button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="601dp"
+            android:backgroundTint="#D33884"
+            android:clickable="false"
+            android:text="Button" />
+
+        <Button
+            android:id="@+id/button2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="363dp"
+            android:backgroundTint="#D33884"
+            android:checkable="false"
+            android:clickable="false"
+            android:text="Button" />
+
+        <TextView
+            android:id="@+id/textView3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginEnd="142dp"
+            android:layout_marginBottom="111dp"
+            android:text="Dark Mode"
+            android:textAlignment="center"
+            android:textColor="#8B348B"
+            android:textSize="20sp"
+            android:textStyle="normal" />
+
+        <Switch
+            android:id="@+id/switch1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_marginEnd="12dp"
+            android:layout_marginBottom="110dp"
+            android:layout_toStartOf="@+id/textView3" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/button4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginEnd="158dp"
+            android:layout_marginBottom="291dp"
+            android:backgroundTint="#00FFFFFF"
+            android:drawableTint="#00FFFFFF"
+            android:foregroundTint="#00FFFFFF"
+            android:shadowColor="#00FFFFFF"
+            android:text="Starter"
+            android:textColor="#8B348B" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/button5"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginEnd="158dp"
+            android:layout_marginBottom="231dp"
+            android:backgroundTint="#00FFFFFF"
+            android:text="Average"
+            android:textColor="#8B348B" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/button6"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginEnd="158dp"
+            android:layout_marginBottom="174dp"
+            android:backgroundTint="#00FFFFFF"
+            android:text="Genius"
+            android:textColor="#8B348B" />
+
+        <SeekBar
+            android:id="@+id/seekBar2"
+            android:layout_width="215dp"
+            android:layout_height="81dp"
+            android:layout_above="@+id/button2"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="98dp"
+            android:layout_marginBottom="68dp"
+            android:backgroundTint="#279D9A"
+            android:progressTint="#279D9A"
+            android:tickMarkTint="#279D9A" />
+
+        <CheckBox
+            android:id="@+id/checkBox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/button2"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="243dp"
+            android:layout_marginBottom="46dp"
+            android:text="Mute" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/button7"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginEnd="15dp"
+            android:layout_marginBottom="21dp"
+            android:backgroundTint="#279D9A"
+            android:text="SAVE"
+            android:textColor="#FFFFFF" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/button8"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginEnd="302dp"
+            android:layout_marginBottom="20dp"
+            android:backgroundTint="#8B348B"
+            android:text="LEAVE"
+            android:textColor="#FFFFFF" />
+
+    </RelativeLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
