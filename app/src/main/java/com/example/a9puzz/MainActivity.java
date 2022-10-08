@@ -51,6 +51,10 @@ import android.util.Log;
 import android.widget.VideoView;
 
 public class MainActivity extends AppCompatActivity {
+    private static boolean activeGrid = true;
+    private static RelativeLayout mPauseLock;
+
+
 
     private static RelativeLayout mTimeWinLose;
     private static  long START_TIME_IN_MILLIS = 90000;
@@ -88,11 +92,13 @@ MediaPlayer music;
             COLUMNS = 3;
             DIMENSION = COLUMNS * COLUMNS;
             //START_TIME_IN_MILLIS=90000;
+            START_TIME_IN_MILLIS = 90000;
         }
         if(Settings.difficulty==2) {
             COLUMNS = 3;
             DIMENSION = COLUMNS * COLUMNS;
             //START_TIME_IN_MILLIS=45000;
+            START_TIME_IN_MILLIS = 90000;
         }
 
         if(Settings.difficulty==3) {
