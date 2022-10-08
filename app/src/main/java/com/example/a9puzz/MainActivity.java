@@ -34,11 +34,28 @@ import android.widget.Toast;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import kotlin.random.Random;
-
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
+import android.os.CountDownTimer;
+import android.util.Log;
+import android.os.CountDownTimer;
+import android.util.Log;
 public class MainActivity extends AppCompatActivity {
 
+    private static RelativeLayout mTimeWinLose;
+    private static final long START_TIME_IN_MILLIS = 66000;
+    private TextView mTextViewCountDown;
+    private static TextView mTextViewWinLose;
+    private static Button mButtonAgain;
+    private CountDownTimer mCountDownTimer;
+    private static TextView mTextViewMoves;
+    private static int countTries = 0;
+    private boolean mTimerRunning;
+    private long mTimeLeftInMillis =  START_TIME_IN_MILLIS;
 
     public static final String up = "up";
     public static final String down = "down";
@@ -58,6 +75,12 @@ MediaPlayer music;
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        mTextViewMoves = findViewById(R.id.text_moves);
+        mTimeWinLose =  findViewById(R.id.winlose);
+        mTextViewWinLose = findViewById(R.id.textwon);
+        mButtonAgain = findViewById(R.id.buttonAgain);
+        mTextViewCountDown = findViewById(R.id.text_countdown);
+        startTimer();
         music = MediaPlayer.create(getApplicationContext(), R.raw.musicbg);
 
 
@@ -179,8 +202,16 @@ MediaPlayer music;
         tileList[currentPosition + swap] = tileList[currentPosition];
         tileList[currentPosition] = newPosition;
         display(context);
+        countTries++;
+        mTextViewMoves.setText(countTries+" Counts");
 
-       if (isSolved()) Toast.makeText(context, "YOU WIN!", Toast.LENGTH_SHORT).show();
+
+       if (isSolved()){
+           mTextViewWinLose.setText("YOU WIN !!");
+           //  mTextViewWinLose.setTextColor(getResources().getColor(com.google.android.material.R.color.material_dynamic_primary0));
+           mTimeWinLose.setVisibility(View.VISIBLE);
+           Toast.makeText(context, "YOU WIN!", Toast.LENGTH_SHORT).show();
+       }
     }
 
 
@@ -262,6 +293,43 @@ MediaPlayer music;
         }
 
         return solved;
+    }
+
+
+
+
+    private void updateCountDownText(){
+        int minutes = (int) (mTimeLeftInMillis /1000 )/ 60;
+        int seconds = (int) (mTimeLeftInMillis /1000 ) % 60;
+        Log.d("MyApp","seconds are : "+seconds);
+        String timeLeftFormatted = String.format(Locale.getDefault(),"%02d:%02d",minutes,seconds);
+        mTextViewCountDown.setText(timeLeftFormatted);
+    }
+    private void startTimer(){
+        mCountDownTimer = new CountDownTimer(mTimeLeftInMillis,1000) {
+            @Override
+            public void onTick(long millisUntilFinished) {
+                mTimeLeftInMillis = millisUntilFinished;
+                updateCountDownText();
+
+            }
+
+            @Override
+            public void onFinish() {
+                mTimeLeftInMillis = 0;
+                updateCountDownText();
+                mTimerRunning = false;
+                mTextViewWinLose.setText("YOU LOSE !!");
+              //  mTextViewWinLose.setTextColor(getResources().getColor(com.google.android.material.R.color.material_dynamic_primary0));
+                mTimeWinLose.setVisibility(View.VISIBLE);
+            }
+        }.start();
+        mTimerRunning = true;
+    }
+
+    private void resetTimer(){
+        mTimeLeftInMillis = START_TIME_IN_MILLIS;
+        updateCountDownText();
     }
 
 
