@@ -1,3 +1,4 @@
+
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -5,15 +6,26 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     >
-<com.example.a9puzz.GestureDetectGridView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/grid"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context="com.example.a9puzz.MainActivity" >
 
-</com.example.a9puzz.GestureDetectGridView>
+
+        <VideoView android:id="@+id/textView123"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentRight="true"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent">
+        </VideoView>
+
+    <com.example.a9puzz.GestureDetectGridView xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/grid"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context="com.example.a9puzz.MainActivity">
+
+    </com.example.a9puzz.GestureDetectGridView>
 
 <LinearLayout
 android:id="@+id/time_moves"

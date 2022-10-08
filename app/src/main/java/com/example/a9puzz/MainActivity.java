@@ -10,12 +10,14 @@ import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.drawable.BitmapDrawable;
 import android.media.MediaPlayer;
+import android.net.Uri;
 import android.os.Bundle;
 
 import com.google.android.material.snackbar.Snackbar;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.os.Handler;
 import android.view.View;
 import android.content.Context;
 import androidx.navigation.NavController;
@@ -35,6 +37,8 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.logging.Logger;
 
 import kotlin.random.Random;
 import android.widget.LinearLayout;
@@ -44,10 +48,12 @@ import android.os.CountDownTimer;
 import android.util.Log;
 import android.os.CountDownTimer;
 import android.util.Log;
+import android.widget.VideoView;
+
 public class MainActivity extends AppCompatActivity {
 
     private static RelativeLayout mTimeWinLose;
-    private static final long START_TIME_IN_MILLIS = 66000;
+    private static  long START_TIME_IN_MILLIS = 90000;
     private TextView mTextViewCountDown;
     private static TextView mTextViewWinLose;
     private static Button mButtonAgain;
@@ -74,7 +80,30 @@ MediaPlayer music;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //Toast.makeText(getApplicationContext(),Settings.difficulty, Toast.LENGTH_SHORT).show();
+
+
+
+        if(Settings.difficulty==1) {
+            COLUMNS = 3;
+            DIMENSION = COLUMNS * COLUMNS;
+            //START_TIME_IN_MILLIS=90000;
+        }
+        if(Settings.difficulty==2) {
+            COLUMNS = 3;
+            DIMENSION = COLUMNS * COLUMNS;
+            //START_TIME_IN_MILLIS=45000;
+        }
+
+        if(Settings.difficulty==3) {
+            COLUMNS = 9;
+            DIMENSION = COLUMNS * COLUMNS;
+            //START_TIME_IN_MILLIS=450000;
+
+        }
         setContentView(R.layout.activity_main);
+
+
         mTextViewMoves = findViewById(R.id.text_moves);
         mTimeWinLose =  findViewById(R.id.winlose);
         mTextViewWinLose = findViewById(R.id.textwon);
@@ -98,8 +127,10 @@ MediaPlayer music;
         mGridView=(GestureDetectGridView) findViewById(R.id.grid);
         mGridView.setNumColumns(COLUMNS);
         tileList = new String[DIMENSION];
+
         for(int i=0;i<tileList.length;i++)
         {
+
             tileList[i]=String.valueOf(i);
         }
        music = MediaPlayer.create(MainActivity.this, R.raw.musicbg);
@@ -127,7 +158,7 @@ MediaPlayer music;
    private static void display(Context context){
         Button button;
         ArrayList<Button> buttons= new ArrayList<>();
-
+       int testboucle;
 
 
 
@@ -138,24 +169,17 @@ MediaPlayer music;
        for (int i = 0; i < tileList.length; i++) {
            button = new Button(context);
 
-           if (tileList[i].equals("0"))
-               button.setBackground(new BitmapDrawable(context.getResources(), ImageLoading.parts.get(0)));
-           else if (tileList[i].equals("1"))
-               button.setBackground(new BitmapDrawable(context.getResources(), ImageLoading.parts.get(1)));
-           else if (tileList[i].equals("2"))
-               button.setBackground(new BitmapDrawable(context.getResources(), ImageLoading.parts.get(2)));
-           else if (tileList[i].equals("3"))
-               button.setBackground(new BitmapDrawable(context.getResources(), ImageLoading.parts.get(3)));
-           else if (tileList[i].equals("4"))
-               button.setBackground(new BitmapDrawable(context.getResources(), ImageLoading.parts.get(4)));
-           else if (tileList[i].equals("5"))
-               button.setBackground(new BitmapDrawable(context.getResources(), ImageLoading.parts.get(5)));
-           else if (tileList[i].equals("6"))
-               button.setBackground(new BitmapDrawable(context.getResources(), ImageLoading.parts.get(6)));
-           else if (tileList[i].equals("7"))
-               button.setBackground(new BitmapDrawable(context.getResources(), ImageLoading.parts.get(7)));
-           else if (tileList[i].equals("8"))
-               button.setBackground(new BitmapDrawable(context.getResources(), ImageLoading.parts.get(8)));
+
+           Log.d("TESTING LENGTH", String.valueOf(ImageLoading.parts.size()));
+            testboucle=0;
+           for(int j=0;j < tileList.length ; j++) {
+
+               if (tileList[i].equals(Integer.toString(j))&& testboucle==0) {
+                   button.setBackground(new BitmapDrawable(context.getResources(), ImageLoading.parts.get(j)));
+                   testboucle=1;
+
+               }
+           }
 
            buttons.add(button);
        }
@@ -332,6 +356,26 @@ MediaPlayer music;
         updateCountDownText();
     }
 
+
+    private void starting()
+    {
+        final Handler handler = new Handler();
+        final TextView textView = (TextView) findViewById(R.id.textView123);
+        final java.util.concurrent.atomic.AtomicInteger n = new AtomicInteger(3);
+        final Runnable counter = new Runnable() {
+            @Override
+            public void run() {
+                textView.setText(Integer.toString(n.get()));
+                if(n.getAndDecrement() >= 1 )
+                    handler.postDelayed(this, 1000);
+                else {
+                    textView.setVisibility(View.GONE);
+                    // start the game
+                }
+            }
+        };
+        handler.postDelayed(counter, 1000);
+    }
 
     public void onDestroy() {
         super.onDestroy();

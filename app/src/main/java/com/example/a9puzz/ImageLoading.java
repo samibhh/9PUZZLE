@@ -13,6 +13,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -27,8 +28,25 @@ public class ImageLoading extends AppCompatActivity {
 public ImageView myImage;
 public static ArrayList<Bitmap> parts;
 private     Bitmap currentBitmap = null;
+    static int COLUMNS;
+    static int DIMENSION =COLUMNS*COLUMNS;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+        setContentView(R.layout.activity_main);
+        if(Settings.difficulty==1) {
+            COLUMNS = 3;
+            DIMENSION = COLUMNS * COLUMNS;
+        }
+        if(Settings.difficulty==2) {
+            COLUMNS = 3;
+            DIMENSION = COLUMNS * COLUMNS;
+        }
+
+        if(Settings.difficulty==3) {
+            COLUMNS = 9;
+            DIMENSION = COLUMNS * COLUMNS;
+        }
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_image_loading);
         int SELECT_IMAGE_CODE=1;
@@ -52,9 +70,8 @@ private     Bitmap currentBitmap = null;
 
 
         gallery.setOnClickListener(view -> {
-
+            MainMenu.selectsfx.start();
             Handler handler = new Handler();
-
 
             String[] projection = new String[]{
                     MediaStore.Images.Media.DATA,
@@ -97,17 +114,25 @@ private     Bitmap currentBitmap = null;
 
 
 
-            parts = splitImage(myImage, 9);
-         Intent intent = new Intent(this, MainActivity.class);
+            parts = splitImage(myImage,DIMENSION);
+         Intent intent = new Intent(this, Starting.class);
             startActivity(intent); });
 
+
         app.setOnClickListener(view -> {
+            MainMenu.selectsfx.start();
             myImage.setImageResource(images[imageId]);
-             parts = splitImage(myImage, 9);
-            Intent intent = new Intent(this, MainActivity.class);
-            startActivity(intent);});
+            Log.d("DIMENSIOnnnN", String.valueOf(DIMENSION));
+
+             parts = splitImage(myImage, DIMENSION);
+            Log.d("PARTSS", String.valueOf(parts.size()));
+            Intent intent = new Intent(this, Starting.class);
+            startActivity(intent);
+
+        });
 
         backward.setOnClickListener(view -> {
+            MainMenu.mp.start();
             Intent intent = new Intent(this, MainMenu.class);
             startActivity(intent);
         });
