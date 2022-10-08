@@ -10,37 +10,46 @@
         android:id="@+id/grid"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context="com.example.a9puzz.MainActivity"></com.example.a9puzz.GestureDetectGridView>
 
-    <LinearLayout
-        android:id="@+id/time_moves"
+        tools:context="com.example.a9puzz.MainActivity">
+
+    </com.example.a9puzz.GestureDetectGridView>
+
+    <RelativeLayout
+        android:id="@+id/pauselock"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:visibility="visible">
+        android:layout_height="match_parent"
+        android:background="#99000000"
+        android:visibility="invisible"></RelativeLayout>
+<LinearLayout
+android:id="@+id/time_moves"
+android:layout_width="match_parent"
+android:layout_height="wrap_content"
+android:visibility="visible">
 
-        <TextView
-            android:id="@+id/text_moves"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="0 MOVES"
-            android:textColor="#fca50f"
-            android:textSize="30dp" />
+<TextView
+    android:id="@+id/text_moves"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="0 MOVES"
+    android:textColor="#fca50f"
+    android:textSize="30dp" />
 
-        <TextView
-            android:id="@+id/text_countdown"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:gravity="right"
-            android:text="01:00"
-            android:textColor="@android:color/holo_red_light"
-            android:textSize="30dp" />
-    </LinearLayout>
+<TextView
+    android:id="@+id/text_countdown"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_alignParentLeft="true"
+    android:gravity="right"
+    android:text="01:00"
+    android:textColor="@android:color/holo_red_light"
+    android:textSize="30dp" />
+</LinearLayout>
 
     <RelativeLayout
         android:id="@+id/winlose"
         android:layout_width="350dp"
-        android:layout_height="250dp"
+        android:layout_height="300dp"
         android:layout_centerInParent="true"
         android:visibility="invisible">
 
@@ -48,7 +57,8 @@
             android:id="@+id/winloseinside"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:visibility="visible">
 
 
             <TextView
@@ -59,7 +69,20 @@
                 android:gravity="center"
                 android:text="YOU WON !!"
                 android:textColor="#fca50f"
-                android:textSize="50dp" />
+                android:textSize="40dp" />
+
+            <RatingBar
+                android:id="@+id/ratingBar"
+                android:layout_width="180dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:gravity="center"
+                android:padding="20dp"
+                android:progressTint="#FF9800"
+                android:rating="3.3"
+                android:scaleX="1.5"
+                android:scaleY="1.5"
+                android:secondaryProgressTint="#00FFFFFF" />
 
             <Button
                 android:id="@+id/buttonAgain"
@@ -81,4 +104,5 @@
         </LinearLayout>
 
     </RelativeLayout>
+
 </RelativeLayout>

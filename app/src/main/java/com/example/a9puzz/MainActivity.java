@@ -1,15 +1,21 @@
 package com.example.a9puzz;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.Point;
+import android.graphics.drawable.BitmapDrawable;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 
 import com.google.android.material.snackbar.Snackbar;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.os.CountDownTimer;
-import android.util.Log;
 import android.view.View;
 import android.content.Context;
 import androidx.navigation.NavController;
@@ -23,32 +29,44 @@ import com.example.a9puzz.databinding.ActivityMainBinding;
 import android.view.ViewTreeObserver;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
+import android.widget.RatingBar;
 import android.widget.Toast;
 
+import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 import kotlin.random.Random;
-
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
+import android.os.CountDownTimer;
+import android.util.Log;
+import android.os.CountDownTimer;
+import android.util.Log;
 public class MainActivity extends AppCompatActivity {
-    private RelativeLayout mTimeWinLose;
-    private static final long START_TIME_IN_MILLIS = 6000;
+    private static boolean activeGrid = true;
+    private static RelativeLayout mPauseLock;
+    private static RelativeLayout mTimeWinLose;
+    private static RatingBar mRatingBar;
+    private static int difficulty = 1;
+    //starter average genuis
+    private static long START_TIME_IN_MILLIS;
     private TextView mTextViewCountDown;
-    private TextView mTextViewWinLose;
-    private Button mButtonAgain;
-    private CountDownTimer mCountDownTimer;
+    private static TextView mTextViewWinLose;
+    private static Button mButtonAgain;
+    private static CountDownTimer mCountDownTimer;
     private static TextView mTextViewMoves;
     private static int countTries = 0;
-    private boolean mTimerRunning;
-    private long mTimeLeftInMillis =  START_TIME_IN_MILLIS;
+    private static boolean mTimerRunning;
+    private static long mTimeLeftInMillis;
+
     public static final String up = "up";
     public static final String down = "down";
     public static final String left = "left";
     public static final String right = "right";
-
+    MediaPlayer music;
 
     private AppBarConfiguration appBarConfiguration;
     private ActivityMainBinding binding;
@@ -63,18 +81,46 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mTextViewMoves = findViewById(R.id.text_moves);
-        init();
-        scramble();
-        setDimensions();
         mTimeWinLose =  findViewById(R.id.winlose);
         mTextViewWinLose = findViewById(R.id.textwon);
         mButtonAgain = findViewById(R.id.buttonAgain);
         mTextViewCountDown = findViewById(R.id.text_countdown);
+        mPauseLock = findViewById(R.id.pauselock);
+        mRatingBar = findViewById(R.id.ratingBar);
+        switch(difficulty){
+            case 1:
+                START_TIME_IN_MILLIS = 90000;
+                break;
+            case 2:
+                START_TIME_IN_MILLIS = 45000;
+                break;
+
+            case 3:
+                START_TIME_IN_MILLIS = 300000;
+                break;
+        }
+        mTimeLeftInMillis =  START_TIME_IN_MILLIS;
         startTimer();
+        //music = MediaPlayer.create(getApplicationContext(), R.raw.musicbg);
+        init();
+        scramble();
+        setDimensions();
+        mButtonAgain.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mTimeWinLose.setVisibility(View.INVISIBLE);
+                resetTimerMoves();
+                activeGrid = true;
+                scoreCalcul(false);
+                //mGridView.setBackground(Color.parseColor("#99000000"));
+                mPauseLock.setVisibility(View.INVISIBLE);
+                startTimer();
+            }
+        });
+
     }
 
     private void init(){
-
         mGridView=(GestureDetectGridView) findViewById(R.id.grid);
         mGridView.setNumColumns(COLUMNS);
         tileList = new String[DIMENSION];
@@ -82,43 +128,10 @@ public class MainActivity extends AppCompatActivity {
         {
             tileList[i]=String.valueOf(i);
         }
+        music = MediaPlayer.create(MainActivity.this, R.raw.musicbg);
+        music.setVolume(Settings.volumeValue,Settings.volumeValue);
+        music.start();
 
-    }
-
-
-    private void updateCountDownText(){
-        int minutes = (int) (mTimeLeftInMillis /1000 )/ 60;
-        int seconds = (int) (mTimeLeftInMillis /1000 ) % 60;
-        Log.d("MyApp","seconds are : "+seconds);
-        String timeLeftFormatted = String.format(Locale.getDefault(),"%02d:%02d",minutes,seconds);
-        mTextViewCountDown.setText(timeLeftFormatted);
-    }
-    private void startTimer(){
-        mCountDownTimer = new CountDownTimer(mTimeLeftInMillis,1000) {
-            @Override
-            public void onTick(long millisUntilFinished) {
-                mTimeLeftInMillis = millisUntilFinished;
-                updateCountDownText();
-
-            }
-
-            @Override
-            public void onFinish() {
-                mTimeLeftInMillis = 0;
-                updateCountDownText();
-                mTimerRunning = false;
-                mTextViewWinLose.setText("YOU LOSE !!");
-                mTextViewWinLose.setTextColor(getResources().getColor(com.google.android.material.R.color.material_dynamic_primary0));
-                mButtonAgain.setBackgroundColor(Color.RED);
-                mTimeWinLose.setVisibility(View.VISIBLE);
-            }
-        }.start();
-        mTimerRunning = true;
-    }
-
-    private void resetTimer(){
-        mTimeLeftInMillis = START_TIME_IN_MILLIS;
-        updateCountDownText();
     }
 
     private void scramble()
@@ -137,34 +150,41 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-   private static void display(Context context){
+    private static void display(Context context){
         Button button;
         ArrayList<Button> buttons= new ArrayList<>();
 
-       for (int i = 0; i < tileList.length; i++) {
-           button = new Button(context);
 
-           if (tileList[i].equals("0"))
-               button.setBackgroundResource(R.drawable.pigeon_piece1);
-           else if (tileList[i].equals("1"))
-               button.setBackgroundResource(R.drawable.pigeon_piece2);
-           else if (tileList[i].equals("2"))
-               button.setBackgroundResource(R.drawable.pigeon_piece3);
-           else if (tileList[i].equals("3"))
-               button.setBackgroundResource(R.drawable.pigeon_piece4);
-           else if (tileList[i].equals("4"))
-               button.setBackgroundResource(R.drawable.pigeon_piece5);
-           else if (tileList[i].equals("5"))
-               button.setBackgroundResource(R.drawable.pigeon_piece6);
-           else if (tileList[i].equals("6"))
-               button.setBackgroundResource(R.drawable.pigeon_piece7);
-           else if (tileList[i].equals("7"))
-               button.setBackgroundResource(R.drawable.pigeon_piece8);
-           else if (tileList[i].equals("8"))
-               button.setBackgroundResource(R.drawable.pigeon_piece9);
 
-           buttons.add(button);
-       }
+
+//ArrayList<Bitmap> parts = splitImage(myImage, 9);
+
+
+
+        for (int i = 0; i < tileList.length; i++) {
+            button = new Button(context);
+
+            if (tileList[i].equals("0"))
+                button.setBackground(new BitmapDrawable(context.getResources(), ImageLoading.parts.get(0)));
+            else if (tileList[i].equals("1"))
+                button.setBackground(new BitmapDrawable(context.getResources(), ImageLoading.parts.get(1)));
+            else if (tileList[i].equals("2"))
+                button.setBackground(new BitmapDrawable(context.getResources(), ImageLoading.parts.get(2)));
+            else if (tileList[i].equals("3"))
+                button.setBackground(new BitmapDrawable(context.getResources(), ImageLoading.parts.get(3)));
+            else if (tileList[i].equals("4"))
+                button.setBackground(new BitmapDrawable(context.getResources(), ImageLoading.parts.get(4)));
+            else if (tileList[i].equals("5"))
+                button.setBackground(new BitmapDrawable(context.getResources(), ImageLoading.parts.get(5)));
+            else if (tileList[i].equals("6"))
+                button.setBackground(new BitmapDrawable(context.getResources(), ImageLoading.parts.get(6)));
+            else if (tileList[i].equals("7"))
+                button.setBackground(new BitmapDrawable(context.getResources(), ImageLoading.parts.get(7)));
+            else if (tileList[i].equals("8"))
+                button.setBackground(new BitmapDrawable(context.getResources(), ImageLoading.parts.get(8)));
+
+            buttons.add(button);
+        }
         mGridView.setAdapter(new CustomAdapter(buttons,mColumnWidth,mColumnHeight));
     }
     private void setDimensions() {
@@ -190,7 +210,7 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-     }
+    }
 
     private int getStatusBarHeight(Context context) {
         int result = 0;
@@ -202,26 +222,31 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-//    private void createButton(){
-//        RelativeLayout rl = (RelativeLayout) findViewById(R.id.my_relative_layout);
-//        ImageView iv = new ImageView(this);
-//        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(30, 40);
-//        params.leftMargin = 50;
-//        params.topMargin = 60;
-//        rl.addView(iv, params);
-//    }
-    private static void swap(Context context, int currentPosition, int swap) {
-        String newPosition = tileList[currentPosition + swap];
-        tileList[currentPosition + swap] = tileList[currentPosition];
-        tileList[currentPosition] = newPosition;
-        display(context);
-        countTries++;
-        mTextViewMoves.setText(countTries+" Counts");
-       if (isSolved()){
-           //createButton();
 
-           Toast.makeText(context, "YOU WIN!", Toast.LENGTH_SHORT).show();
-       }
+    private static void swap(Context context, int currentPosition, int swap) {
+        if(activeGrid){
+            String newPosition = tileList[currentPosition + swap];
+            tileList[currentPosition + swap] = tileList[currentPosition];
+            tileList[currentPosition] = newPosition;
+            display(context);
+            countTries++;
+            mTextViewMoves.setText(countTries+" MOVES");
+
+
+            if (isSolved()){
+                mTextViewWinLose.setText("YOU WIN !!");
+                mTextViewWinLose.setTextColor(Color.parseColor("#ffa408"));
+                activeGrid = false;
+                //mGridView.setBackgroundColor(Color.parseColor("#70000000"));
+                scoreCalcul(true);
+                mPauseLock.setVisibility(View.VISIBLE);
+                mTimeWinLose.setVisibility(View.VISIBLE);
+                Toast.makeText(context, "YOU WIN!", Toast.LENGTH_SHORT).show();
+                pauseTimer();
+
+            }
+        }
+
     }
 
 
@@ -303,6 +328,97 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return solved;
+    }
+
+
+
+
+    private void updateCountDownText(){
+        int minutes = (int) (mTimeLeftInMillis /1000 )/ 60;
+        int seconds = (int) (mTimeLeftInMillis /1000 ) % 60;
+        Log.d("MyApp","seconds are : "+seconds);
+        String timeLeftFormatted = String.format(Locale.getDefault(),"%02d:%02d",minutes,seconds);
+        mTextViewCountDown.setText(timeLeftFormatted);
+    }
+    private void startTimer(){
+        mCountDownTimer = new CountDownTimer(mTimeLeftInMillis,1000) {
+            @Override
+            public void onTick(long millisUntilFinished) {
+                mTimeLeftInMillis = millisUntilFinished;
+                updateCountDownText();
+
+            }
+
+            @Override
+            public void onFinish() {
+                mTimeLeftInMillis = 0;
+                updateCountDownText();
+                mTimerRunning = false;
+                mTextViewWinLose.setText("YOU LOSE !!");
+                mTextViewWinLose.setTextColor(Color.parseColor("#ff3d08"));
+                activeGrid = false;
+                scoreCalcul(true);
+                mPauseLock.setVisibility(View.VISIBLE);
+                //mGridView.setBackgroundColor(Color.parseColor("#70000000"));
+                mTimeWinLose.setVisibility(View.VISIBLE);
+            }
+        }.start();
+        mTimerRunning = true;
+    }
+
+    private static void pauseTimer(){
+        mCountDownTimer.cancel();
+        mTimerRunning = false;
+    }
+
+    private void resetTimerMoves(){
+        mTimeLeftInMillis = START_TIME_IN_MILLIS;
+        countTries = 0;
+        mTextViewMoves.setText(countTries+" MOVES");
+        updateCountDownText();
+    }
+
+    private static void scoreCalcul(boolean check){
+        if(check){
+            int minutes = (int) (mTimeLeftInMillis /1000 )/ 60;
+            int seconds = (int) (mTimeLeftInMillis /1000 ) % 60;
+            int time = (minutes*60) + seconds;
+            int score = 0;
+            float stars;
+            switch(difficulty){
+                case 1:
+                    score = (90-time) + (countTries*2);
+                    if(score < 50) stars = 5;
+                    else if(score < 70) stars = (float) 3.3;
+                    else stars = (float) 1.6;
+                    break;
+
+                case 2:
+                    score = (45-time) + (countTries*2);
+                    if(score < 30) stars = (float) 5;
+                    else if(score < 50) stars = (float) 3.3;
+                    else stars = (float) 1.6;
+                    break;
+
+                case 3:
+                    score = (300-time) + (countTries*2);
+                    if(score < 140) stars = 5;
+                    else if(score < 200) stars = (float) 3.3;
+                    else stars = (float) 1.6;
+                    break;
+                default:
+                    stars = 0;
+            }
+            Log.d("Score","Time is : "+time+" score is : "+score+" stars : "+stars);
+            mRatingBar.setRating(stars);
+        }else mRatingBar.setRating(0);
+
+    }
+
+    public void onDestroy() {
+        super.onDestroy();
+        if(music.isPlaying())
+            music.stop();
     }
 
 }
