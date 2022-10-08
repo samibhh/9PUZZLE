@@ -2,6 +2,14 @@ package com.example.a9puzz;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.Point;
+import android.graphics.drawable.BitmapDrawable;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 
 import com.google.android.material.snackbar.Snackbar;
@@ -20,19 +28,23 @@ import com.example.a9puzz.databinding.ActivityMainBinding;
 
 import android.view.ViewTreeObserver;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.Toast;
 
+import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 
 import kotlin.random.Random;
 
 public class MainActivity extends AppCompatActivity {
 
+
     public static final String up = "up";
     public static final String down = "down";
     public static final String left = "left";
     public static final String right = "right";
-
+MediaPlayer music;
 
     private AppBarConfiguration appBarConfiguration;
     private ActivityMainBinding binding;
@@ -46,13 +58,13 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        music = MediaPlayer.create(getApplicationContext(), R.raw.musicbg);
 
 
 
 
         init();
         scramble();
-
         setDimensions();
 
 
@@ -67,6 +79,9 @@ public class MainActivity extends AppCompatActivity {
         {
             tileList[i]=String.valueOf(i);
         }
+       music = MediaPlayer.create(MainActivity.this, R.raw.musicbg);
+        music.setVolume(Settings.volumeValue,Settings.volumeValue);
+        music.start();
 
     }
 
@@ -90,27 +105,34 @@ public class MainActivity extends AppCompatActivity {
         Button button;
         ArrayList<Button> buttons= new ArrayList<>();
 
+
+
+
+//ArrayList<Bitmap> parts = splitImage(myImage, 9);
+
+
+
        for (int i = 0; i < tileList.length; i++) {
            button = new Button(context);
 
            if (tileList[i].equals("0"))
-               button.setBackgroundResource(R.drawable.pigeon_piece1);
+               button.setBackground(new BitmapDrawable(context.getResources(), ImageLoading.parts.get(0)));
            else if (tileList[i].equals("1"))
-               button.setBackgroundResource(R.drawable.pigeon_piece2);
+               button.setBackground(new BitmapDrawable(context.getResources(), ImageLoading.parts.get(1)));
            else if (tileList[i].equals("2"))
-               button.setBackgroundResource(R.drawable.pigeon_piece3);
+               button.setBackground(new BitmapDrawable(context.getResources(), ImageLoading.parts.get(2)));
            else if (tileList[i].equals("3"))
-               button.setBackgroundResource(R.drawable.pigeon_piece4);
+               button.setBackground(new BitmapDrawable(context.getResources(), ImageLoading.parts.get(3)));
            else if (tileList[i].equals("4"))
-               button.setBackgroundResource(R.drawable.pigeon_piece5);
+               button.setBackground(new BitmapDrawable(context.getResources(), ImageLoading.parts.get(4)));
            else if (tileList[i].equals("5"))
-               button.setBackgroundResource(R.drawable.pigeon_piece6);
+               button.setBackground(new BitmapDrawable(context.getResources(), ImageLoading.parts.get(5)));
            else if (tileList[i].equals("6"))
-               button.setBackgroundResource(R.drawable.pigeon_piece7);
+               button.setBackground(new BitmapDrawable(context.getResources(), ImageLoading.parts.get(6)));
            else if (tileList[i].equals("7"))
-               button.setBackgroundResource(R.drawable.pigeon_piece8);
+               button.setBackground(new BitmapDrawable(context.getResources(), ImageLoading.parts.get(7)));
            else if (tileList[i].equals("8"))
-               button.setBackgroundResource(R.drawable.pigeon_piece9);
+               button.setBackground(new BitmapDrawable(context.getResources(), ImageLoading.parts.get(8)));
 
            buttons.add(button);
        }
@@ -242,4 +264,11 @@ public class MainActivity extends AppCompatActivity {
         return solved;
     }
 
-}
+
+    public void onDestroy() {
+        super.onDestroy();
+        if(music.isPlaying())
+            music.stop();
+    }
+
+    }

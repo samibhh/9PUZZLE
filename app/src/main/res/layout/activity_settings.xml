@@ -9,8 +9,8 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:layout_editor_absoluteX="169dp"
-        tools:layout_editor_absoluteY="16dp">
+        tools:layout_editor_absoluteX="-55dp"
+        tools:layout_editor_absoluteY="-141dp">
 
 
         <Button
@@ -97,7 +97,7 @@
             android:textColor="#8B348B" />
 
         <SeekBar
-            android:id="@+id/seekBar2"
+            android:id="@+id/sound"
             android:layout_width="215dp"
             android:layout_height="81dp"
             android:layout_above="@+id/button2"
@@ -105,6 +105,8 @@
             android:layout_marginEnd="98dp"
             android:layout_marginBottom="68dp"
             android:backgroundTint="#279D9A"
+            android:max="10"
+            android:progress="10"
             android:progressTint="#279D9A"
             android:tickMarkTint="#279D9A" />
 
@@ -141,6 +143,21 @@
             android:backgroundTint="#8B348B"
             android:text="LEAVE"
             android:textColor="#FFFFFF" />
+
+        <TextView
+            android:id="@+id/volume"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/sound"
+            android:layout_alignStart="@+id/sound"
+            android:layout_alignTop="@+id/sound"
+            android:layout_alignEnd="@+id/sound"
+            android:layout_marginStart="87dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="93dp"
+            android:layout_marginBottom="-30dp"
+            android:text="100%" />
+
 
     </RelativeLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
