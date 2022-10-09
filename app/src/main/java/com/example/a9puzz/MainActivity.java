@@ -31,6 +31,7 @@ import com.example.a9puzz.databinding.ActivityMainBinding;
 import android.view.ViewTreeObserver;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.RatingBar;
 import android.widget.Toast;
 
 import java.io.File;
@@ -53,19 +54,30 @@ import android.widget.VideoView;
 public class MainActivity extends AppCompatActivity {
     private static boolean activeGrid = true;
     private static RelativeLayout mPauseLock;
-
-
-
     private static RelativeLayout mTimeWinLose;
-    private static  long START_TIME_IN_MILLIS = 90000;
+    private static RatingBar mRatingBar;
+    private static boolean mTimerRunning;
+    private static long mTimeLeftInMillis;
+
+
+
+
+    private static  long START_TIME_IN_MILLIS;
     private TextView mTextViewCountDown;
     private static TextView mTextViewWinLose;
     private static Button mButtonAgain;
-    private CountDownTimer mCountDownTimer;
+    private static CountDownTimer mCountDownTimer;
+
+
     private static TextView mTextViewMoves;
     private static int countTries = 0;
-    private boolean mTimerRunning;
-    private long mTimeLeftInMillis =  START_TIME_IN_MILLIS;
+
+
+
+
+
+
+
 
     public static final String up = "up";
     public static final String down = "down";
@@ -85,46 +97,58 @@ MediaPlayer music;
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         //Toast.makeText(getApplicationContext(),Settings.difficulty, Toast.LENGTH_SHORT).show();
+        setContentView(R.layout.activity_main);
+
+        mPauseLock = findViewById(R.id.pauselock);
+        mRatingBar = findViewById(R.id.ratingBar);
+        mTextViewMoves = findViewById(R.id.text_moves);
+        mTimeWinLose =  findViewById(R.id.winlose);
+        mTextViewWinLose = findViewById(R.id.textwon);
+        mButtonAgain = findViewById(R.id.buttonAgain);
+        mTextViewCountDown = findViewById(R.id.text_countdown);
 
 
 
         if(Settings.difficulty==1) {
             COLUMNS = 3;
             DIMENSION = COLUMNS * COLUMNS;
-            //START_TIME_IN_MILLIS=90000;
-            START_TIME_IN_MILLIS = 90000;
+            START_TIME_IN_MILLIS=90000;
         }
         if(Settings.difficulty==2) {
             COLUMNS = 3;
             DIMENSION = COLUMNS * COLUMNS;
-            //START_TIME_IN_MILLIS=45000;
-            START_TIME_IN_MILLIS = 90000;
+            START_TIME_IN_MILLIS=45000;
         }
 
         if(Settings.difficulty==3) {
             COLUMNS = 9;
             DIMENSION = COLUMNS * COLUMNS;
-            //START_TIME_IN_MILLIS=450000;
+            START_TIME_IN_MILLIS=300000;
 
         }
-        setContentView(R.layout.activity_main);
+        mTimeLeftInMillis =  START_TIME_IN_MILLIS;
 
 
-        mTextViewMoves = findViewById(R.id.text_moves);
-        mTimeWinLose =  findViewById(R.id.winlose);
-        mTextViewWinLose = findViewById(R.id.textwon);
-        mButtonAgain = findViewById(R.id.buttonAgain);
-        mTextViewCountDown = findViewById(R.id.text_countdown);
         startTimer();
+
         music = MediaPlayer.create(getApplicationContext(), R.raw.musicbg);
-
-
 
 
         init();
         scramble();
         setDimensions();
-
+        mButtonAgain.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mTimeWinLose.setVisibility(View.INVISIBLE);
+                resetTimerMoves();
+                activeGrid = true;
+                scoreCalcul(false);
+                //mGridView.setBackground(Color.parseColor("#99000000"));
+                mPauseLock.setVisibility(View.INVISIBLE);
+                startTimer();
+            }
+        });
 
     }
 
@@ -228,20 +252,26 @@ MediaPlayer music;
 
 
     private static void swap(Context context, int currentPosition, int swap) {
-        String newPosition = tileList[currentPosition + swap];
-        tileList[currentPosition + swap] = tileList[currentPosition];
-        tileList[currentPosition] = newPosition;
-        display(context);
-        countTries++;
-        mTextViewMoves.setText(countTries+" Counts");
+        if(activeGrid){
+            String newPosition = tileList[currentPosition + swap];
+            tileList[currentPosition + swap] = tileList[currentPosition];
+            tileList[currentPosition] = newPosition;
+            display(context);
+            countTries++;
+            mTextViewMoves.setText(countTries+" MOVES");
+            if (isSolved()){
+                mTextViewWinLose.setText("YOU WIN !!");
+                mTextViewWinLose.setTextColor(Color.parseColor("#ffa408"));
+                activeGrid = false;
+                //mGridView.setBackgroundColor(Color.parseColor("#70000000"));
+                scoreCalcul(true);
+                mPauseLock.setVisibility(View.VISIBLE);
+                mTimeWinLose.setVisibility(View.VISIBLE);
+                Toast.makeText(context, "YOU WIN!", Toast.LENGTH_SHORT).show();
+                pauseTimer();
+            }
+        }
 
-
-       if (isSolved()){
-           mTextViewWinLose.setText("YOU WIN !!");
-           //  mTextViewWinLose.setTextColor(getResources().getColor(com.google.android.material.R.color.material_dynamic_primary0));
-           mTimeWinLose.setVisibility(View.VISIBLE);
-           Toast.makeText(context, "YOU WIN!", Toast.LENGTH_SHORT).show();
-       }
     }
 
 
@@ -350,6 +380,11 @@ MediaPlayer music;
                 updateCountDownText();
                 mTimerRunning = false;
                 mTextViewWinLose.setText("YOU LOSE !!");
+                mTextViewWinLose.setTextColor(Color.parseColor("#ff3d08"));
+                activeGrid = false;
+                scoreCalcul(true);
+                mPauseLock.setVisibility(View.VISIBLE);
+                //mGridView.setBackgroundColor(Color.parseColor("#70000000"));
               //  mTextViewWinLose.setTextColor(getResources().getColor(com.google.android.material.R.color.material_dynamic_primary0));
                 mTimeWinLose.setVisibility(View.VISIBLE);
             }
@@ -363,26 +398,50 @@ MediaPlayer music;
     }
 
 
-    private void starting()
-    {
-        final Handler handler = new Handler();
-        final TextView textView = (TextView) findViewById(R.id.textView123);
-        final java.util.concurrent.atomic.AtomicInteger n = new AtomicInteger(3);
-        final Runnable counter = new Runnable() {
-            @Override
-            public void run() {
-                textView.setText(Integer.toString(n.get()));
-                if(n.getAndDecrement() >= 1 )
-                    handler.postDelayed(this, 1000);
-                else {
-                    textView.setVisibility(View.GONE);
-                    // start the game
-                }
-            }
-        };
-        handler.postDelayed(counter, 1000);
+    private static void pauseTimer(){
+        mCountDownTimer.cancel();
+        mTimerRunning = false;
     }
-
+    private void resetTimerMoves(){
+        mTimeLeftInMillis = START_TIME_IN_MILLIS;
+        countTries = 0;
+        mTextViewMoves.setText(countTries+" MOVES");
+        updateCountDownText();
+    }
+    private static void scoreCalcul(boolean check){
+        if(check){
+            int minutes = (int) (mTimeLeftInMillis /1000 )/ 60;
+            int seconds = (int) (mTimeLeftInMillis /1000 ) % 60;
+            int time = (minutes*60) + seconds;
+            int score = 0;
+            float stars;
+            switch(Settings.difficulty){
+                case 1:
+                    score = (90-time) + (countTries*2);
+                    if(score < 50) stars = 5;
+                    else if(score < 70) stars = (float) 3.3;
+                    else stars = (float) 1.6;
+                    break;
+                case 2:
+                    score = (45-time) + (countTries*2);
+                    if(score < 30) stars = (float) 5;
+                    else if(score < 50) stars = (float) 3.3;
+                    else stars = (float) 1.6;
+                    break;
+                case 3:
+                    score = (300-time) + (countTries*2);
+                    if(score < 140) stars = 5;
+                    else if(score < 200) stars = (float) 3.3;
+                    else stars = (float) 1.6;
+                    break;
+                default:
+                    stars = 0;
+            }
+            Log.d("Score","Time is : "+time+" score is : "+score+" stars : "+stars);
+            mRatingBar.setRating(stars);
+        }else mRatingBar.setRating(0);
+    }
+    @Override
     public void onDestroy() {
         super.onDestroy();
         if(music.isPlaying())

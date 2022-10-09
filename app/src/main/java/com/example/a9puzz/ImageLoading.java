@@ -135,6 +135,7 @@ private     Bitmap currentBitmap = null;
             MainMenu.mp.start();
             Intent intent = new Intent(this, MainMenu.class);
             startActivity(intent);
+            finish();
         });
 
 
@@ -182,7 +183,7 @@ private     Bitmap currentBitmap = null;
         return chunkedImages;
     }
 
-
+@Override
     public void onDestroy() {
         super.onDestroy();
 

@@ -34,7 +34,9 @@ public class Starting extends AppCompatActivity {
             public void onCompletion(MediaPlayer mp) {
                 // TODO Auto-generated method stub
                 startingcounter.setEnabled(false);
+
                 goToMainActivity();
+                finish();
                 //write your code after complete video play
             }
         });
@@ -45,5 +47,11 @@ public class Starting extends AppCompatActivity {
     {
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
+    }
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+
+
     }
 }

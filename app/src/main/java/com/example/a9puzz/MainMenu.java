@@ -50,7 +50,7 @@ public class MainMenu extends AppCompatActivity {
 
         exit.setOnClickListener(view -> {
             mp.start();
-           finish();
+            finish();
         });
 
     }
