@@ -13,7 +13,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 public class Settings extends AppCompatActivity {
-static float volumeValue=8;
+static float volumeValue=80;
 static int difficulty=1;
     Button starter;
     Button average;
