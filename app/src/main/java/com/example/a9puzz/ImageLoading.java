@@ -25,9 +25,9 @@ import java.util.List;
 import java.util.Random;
 
 public class ImageLoading extends AppCompatActivity {
-public ImageView myImage;
+public static ImageView myImage;
 public static ArrayList<Bitmap> parts;
-private     Bitmap currentBitmap = null;
+private   static   Bitmap currentBitmap = null;
     static int COLUMNS;
     static int DIMENSION =COLUMNS*COLUMNS;
     @Override
@@ -58,11 +58,10 @@ private     Bitmap currentBitmap = null;
         backward= findViewById(R.id.backward);
         myImage = findViewById(R.id.srcimage);
 
-        int[] images = new int[] {R.drawable.image01, R.drawable.image02, R.drawable.image03, R.drawable.image04, R.drawable.image05};
 
 
 // Get a random between 0 and images.length-1
-        int imageId = (int)(Math.random() * images.length);
+
 
 // Set the image
 
@@ -71,64 +70,16 @@ private     Bitmap currentBitmap = null;
 
         gallery.setOnClickListener(view -> {
             MainMenu.selectsfx.start();
-            Handler handler = new Handler();
-
-            String[] projection = new String[]{
-                    MediaStore.Images.Media.DATA,
-            };
-
-            Uri imagess = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
-            Cursor cur = managedQuery(imagess,
-                    projection,
-                    "",
-                    null,
-                    ""
-            );
-
-            final ArrayList<String> imagesPath = new ArrayList<String>();
-            if (cur.moveToFirst()) {
-
-                int dataColumn = cur.getColumnIndex(
-                        MediaStore.Images.Media.DATA);
-                do {
-                    imagesPath.add(cur.getString(dataColumn));
-                } while (cur.moveToNext());
-            }
-            cur.close();
-            final Random random = new Random();
-            final int count = imagesPath.size();
-
-
-                    int number = random.nextInt(count);
-                    String path = imagesPath.get(number);
-                    Toast.makeText(getApplicationContext(), path, Toast.LENGTH_SHORT).show();
-                    if (currentBitmap != null)
-                        currentBitmap.recycle();
-                    currentBitmap = BitmapFactory.decodeFile(path);
-
-
-                    myImage.setImageBitmap(currentBitmap);
-
-
-
-
-
-
-            parts = splitImage(myImage,DIMENSION);
+loadGallery();
          Intent intent = new Intent(this, Starting.class);
             startActivity(intent); });
 
 
         app.setOnClickListener(view -> {
-            MainMenu.selectsfx.start();
-            myImage.setImageResource(images[imageId]);
-            Log.d("DIMENSIOnnnN", String.valueOf(DIMENSION));
 
-             parts = splitImage(myImage, DIMENSION);
-            Log.d("PARTSS", String.valueOf(parts.size()));
+            loadApp();
             Intent intent = new Intent(this, Starting.class);
             startActivity(intent);
-
         });
 
         backward.setOnClickListener(view -> {
@@ -189,5 +140,61 @@ private     Bitmap currentBitmap = null;
 
     }
 
+   public static void loadApp(){
+        int[] images = new int[] {R.drawable.image01, R.drawable.image02, R.drawable.image03, R.drawable.image04, R.drawable.image05};
+        int imageId = (int)(Math.random() * images.length);
+        MainMenu.selectsfx.start();
+        myImage.setImageResource(images[imageId]);
+        Log.d("DIMENSIOnnnN", String.valueOf(DIMENSION));
 
+        parts = splitImage(myImage, DIMENSION);
+        Log.d("PARTSS", String.valueOf(parts.size()));
+
+    }
+
+    public void loadGallery(){
+        Handler handler = new Handler();
+
+        String[] projection = new String[]{
+                MediaStore.Images.Media.DATA,
+        };
+
+        Uri imagess = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
+        Cursor cur = managedQuery(imagess,
+                projection,
+                "",
+                null,
+                ""
+        );
+
+        final ArrayList<String> imagesPath = new ArrayList<String>();
+        if (cur.moveToFirst()) {
+
+            int dataColumn = cur.getColumnIndex(
+                    MediaStore.Images.Media.DATA);
+            do {
+                imagesPath.add(cur.getString(dataColumn));
+            } while (cur.moveToNext());
+        }
+        cur.close();
+        final Random random = new Random();
+        final int count = imagesPath.size();
+
+
+        int number = random.nextInt(count);
+        String path = imagesPath.get(number);
+        if (currentBitmap != null)
+            currentBitmap.recycle();
+        currentBitmap = BitmapFactory.decodeFile(path);
+
+
+        myImage.setImageBitmap(currentBitmap);
+
+
+
+
+
+
+        parts = splitImage(myImage,DIMENSION);
+    }
 }

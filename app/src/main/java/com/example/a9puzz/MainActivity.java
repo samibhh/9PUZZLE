@@ -51,7 +51,7 @@ import android.os.CountDownTimer;
 import android.util.Log;
 import android.widget.VideoView;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity<ActivityMainBinding> extends AppCompatActivity {
     private static boolean activeGrid = true;
     private static RelativeLayout mPauseLock;
     private static RelativeLayout mTimeWinLose;
@@ -66,12 +66,12 @@ public class MainActivity extends AppCompatActivity {
     private TextView mTextViewCountDown;
     private static TextView mTextViewWinLose;
     private static Button mButtonAgain;
+    private static Button mButtonExit;
     private static CountDownTimer mCountDownTimer;
 
 
     private static TextView mTextViewMoves;
     private static int countTries = 0;
-
 
 
 
@@ -98,7 +98,6 @@ MediaPlayer music;
         super.onCreate(savedInstanceState);
         //Toast.makeText(getApplicationContext(),Settings.difficulty, Toast.LENGTH_SHORT).show();
         setContentView(R.layout.activity_main);
-
         mPauseLock = findViewById(R.id.pauselock);
         mRatingBar = findViewById(R.id.ratingBar);
         mTextViewMoves = findViewById(R.id.text_moves);
@@ -106,6 +105,7 @@ MediaPlayer music;
         mTextViewWinLose = findViewById(R.id.textwon);
         mButtonAgain = findViewById(R.id.buttonAgain);
         mTextViewCountDown = findViewById(R.id.text_countdown);
+        mButtonExit=findViewById(R.id.buttonExit);
 
 
 
@@ -135,9 +135,11 @@ MediaPlayer music;
 
 
         init();
+
         scramble();
         setDimensions();
-        mButtonAgain.setOnClickListener(new View.OnClickListener() {
+        lastScreen();
+      /*  mButtonAgain.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 mTimeWinLose.setVisibility(View.INVISIBLE);
@@ -148,7 +150,11 @@ MediaPlayer music;
                 mPauseLock.setVisibility(View.INVISIBLE);
                 startTimer();
             }
-        });
+        });*/
+
+
+
+
 
     }
 
@@ -382,13 +388,15 @@ MediaPlayer music;
                 mTextViewWinLose.setText("YOU LOSE !!");
                 mTextViewWinLose.setTextColor(Color.parseColor("#ff3d08"));
                 activeGrid = false;
-                scoreCalcul(true);
+                mRatingBar.setRating(0);
                 mPauseLock.setVisibility(View.VISIBLE);
                 //mGridView.setBackgroundColor(Color.parseColor("#70000000"));
               //  mTextViewWinLose.setTextColor(getResources().getColor(com.google.android.material.R.color.material_dynamic_primary0));
                 mTimeWinLose.setVisibility(View.VISIBLE);
-            }
-        }.start();
+
+    }
+
+}.start();
         mTimerRunning = true;
     }
 
@@ -446,6 +454,38 @@ MediaPlayer music;
         super.onDestroy();
         if(music.isPlaying())
             music.stop();
+    }
+
+
+    void playAgain()
+    {
+
+    ImageLoading.loadApp();
+        Intent intent = new Intent(this, Starting.class);
+        startActivity(intent);
+
+
+    }
+    void lastScreen()
+    {
+        mButtonExit.setOnClickListener(view ->
+        {
+            music.stop();
+
+            finish();
+
+
+        } );
+
+        mButtonAgain.setOnClickListener(view ->
+        {
+            music.stop();
+
+            playAgain();
+
+
+        });
+
     }
 
     }
