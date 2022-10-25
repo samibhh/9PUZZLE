@@ -1,6 +1,7 @@
 package com.example.a9puzz;
 
 import android.annotation.SuppressLint;
+import android.app.Application;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -32,7 +33,15 @@ import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.Toast;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -46,6 +55,9 @@ import android.util.Log;
 import android.os.CountDownTimer;
 import android.util.Log;
 public class MainActivity extends AppCompatActivity {
+    private static Context mContext;
+    private static final String FILE_NAME = "bestScore.txt";
+    private static TextView mTextViewBestScore;
     private static boolean activeGrid = true;
     private static RelativeLayout mPauseLock;
     private static RelativeLayout mTimeWinLose;
@@ -87,6 +99,10 @@ public class MainActivity extends AppCompatActivity {
         mTextViewCountDown = findViewById(R.id.text_countdown);
         mPauseLock = findViewById(R.id.pauselock);
         mRatingBar = findViewById(R.id.ratingBar);
+        mContext = getApplicationContext();
+        mTextViewBestScore = findViewById(R.id.newscore);
+        String data = readFromFile();
+        if(data == "") writeToFile("999");
         switch(difficulty){
             case 1:
                 START_TIME_IN_MILLIS = 90000;
@@ -111,7 +127,7 @@ public class MainActivity extends AppCompatActivity {
                 mTimeWinLose.setVisibility(View.INVISIBLE);
                 resetTimerMoves();
                 activeGrid = true;
-                scoreCalcul(false);
+                scoreCalcul();
                 //mGridView.setBackground(Color.parseColor("#99000000"));
                 mPauseLock.setVisibility(View.INVISIBLE);
                 startTimer();
@@ -238,7 +254,7 @@ public class MainActivity extends AppCompatActivity {
                 mTextViewWinLose.setTextColor(Color.parseColor("#ffa408"));
                 activeGrid = false;
                 //mGridView.setBackgroundColor(Color.parseColor("#70000000"));
-                scoreCalcul(true);
+                scoreCalcul();
                 mPauseLock.setVisibility(View.VISIBLE);
                 mTimeWinLose.setVisibility(View.VISIBLE);
                 Toast.makeText(context, "YOU WIN!", Toast.LENGTH_SHORT).show();
@@ -336,7 +352,7 @@ public class MainActivity extends AppCompatActivity {
     private void updateCountDownText(){
         int minutes = (int) (mTimeLeftInMillis /1000 )/ 60;
         int seconds = (int) (mTimeLeftInMillis /1000 ) % 60;
-        Log.d("MyApp","seconds are : "+seconds);
+        //Log.d("MyApp","seconds are : "+seconds);
         String timeLeftFormatted = String.format(Locale.getDefault(),"%02d:%02d",minutes,seconds);
         mTextViewCountDown.setText(timeLeftFormatted);
     }
@@ -357,7 +373,7 @@ public class MainActivity extends AppCompatActivity {
                 mTextViewWinLose.setText("YOU LOSE !!");
                 mTextViewWinLose.setTextColor(Color.parseColor("#ff3d08"));
                 activeGrid = false;
-                scoreCalcul(true);
+                mRatingBar.setRating(0);
                 mPauseLock.setVisibility(View.VISIBLE);
                 //mGridView.setBackgroundColor(Color.parseColor("#70000000"));
                 mTimeWinLose.setVisibility(View.VISIBLE);
@@ -378,8 +394,7 @@ public class MainActivity extends AppCompatActivity {
         updateCountDownText();
     }
 
-    private static void scoreCalcul(boolean check){
-        if(check){
+    private static void scoreCalcul(){
             int minutes = (int) (mTimeLeftInMillis /1000 )/ 60;
             int seconds = (int) (mTimeLeftInMillis /1000 ) % 60;
             int time = (minutes*60) + seconds;
@@ -409,10 +424,70 @@ public class MainActivity extends AppCompatActivity {
                 default:
                     stars = 0;
             }
+            String data = readFromFile();
+        Log.d("HORARARARARARA : ","BAKAKAKAKAKKAKAKAK: "+data);
+            if(score < Integer.parseInt(data)){
+                writeToFile(score+"");
+                mTextViewBestScore.setVisibility(View.VISIBLE);
+            }else{
+                mTextViewBestScore.setVisibility(View.INVISIBLE);
+            }
+            Log.d("Best score : ","balalala is : "+data);
             Log.d("Score","Time is : "+time+" score is : "+score+" stars : "+stars);
             mRatingBar.setRating(stars);
-        }else mRatingBar.setRating(0);
+    }
 
+
+    private static void writeToFile(String data) {
+
+        FileOutputStream fos = null;
+        try {
+            fos = mContext.openFileOutput(FILE_NAME,MODE_PRIVATE);
+            fos.write(data.getBytes());
+//            OutputStreamWriter outputStreamWriter = new OutputStreamWriter(, MODE_PRIVATE));
+ //           outputStreamWriter.write(data);
+ //           outputStreamWriter.close();
+        }
+        catch (IOException e) {
+            Log.e("Exception", "File write failed: " + e.toString());
+        }finally {
+            if(fos != null){
+                try {
+                    fos.close();
+                }catch(IOException e){
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+    private static String readFromFile() {
+        FileInputStream fis = null;
+        try {
+           fis = mContext.openFileInput(FILE_NAME);
+           InputStreamReader isr = new InputStreamReader(fis);
+           BufferedReader br = new BufferedReader(isr);
+           String sb = "";
+           String  text;
+           while((text = br.readLine()) != null){
+               sb = text;
+           }
+            return sb;
+        }
+        catch (FileNotFoundException e) {
+            Log.e("login activity", "File not found: " + e.toString());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }finally{
+            if(fis != null){
+                try {
+                    fis.close();
+                }catch(IOException e){
+                    e.printStackTrace();
+                }
+
+            }
+        }
+        return null;
     }
 
     public void onDestroy() {
