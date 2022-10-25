@@ -5,12 +5,20 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ImageLoading">
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/lottie2"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
 
+        app:lottie_rawRes="@raw/puzzle2"
+        tools:ignore="MissingConstraints" />
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:layout_editor_absoluteX="0dp"
-        tools:layout_editor_absoluteY="45dp">
+        tools:layout_editor_absoluteY="45dp"
+        android:id="@+id/lay"
+        >
 
 
         <ImageView

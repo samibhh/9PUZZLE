@@ -34,7 +34,13 @@ import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.Toast;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -52,6 +58,9 @@ import android.util.Log;
 import android.widget.VideoView;
 
 public class MainActivity extends AppCompatActivity {
+    private static Context mContext;
+    private static final String FILE_NAME = "bestScore.txt";
+    private static TextView mTextViewBestScore;
     private static boolean activeGrid = true;
     private static RelativeLayout mPauseLock;
     private static RelativeLayout mTimeWinLose;
@@ -106,9 +115,13 @@ MediaPlayer music;
         mTextViewWinLose = findViewById(R.id.textwon);
         mButtonAgain = findViewById(R.id.buttonAgain);
         mTextViewCountDown = findViewById(R.id.text_countdown);
+        View mexit = findViewById(R.id.buttonExit);
 
-
-
+        mContext = getApplicationContext();
+        mTextViewBestScore = findViewById(R.id.newscore);
+        //writeToFile("999");
+        String data = readFromFile();
+        if(data == "") writeToFile("999");
         if(Settings.difficulty==1) {
             COLUMNS = 3;
             DIMENSION = COLUMNS * COLUMNS;
@@ -150,6 +163,16 @@ MediaPlayer music;
             }
         });
 
+
+        mexit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getApplicationContext(),ImageLoading.class);
+                startActivity(intent);
+                finish();
+            }
+        });
+
     }
 
     private void init(){
@@ -166,6 +189,11 @@ MediaPlayer music;
        music = MediaPlayer.create(MainActivity.this, R.raw.musicbg);
         music.setVolume(Settings.volumeValue,Settings.volumeValue);
         music.start();
+
+
+
+
+
 
     }
 
@@ -437,10 +465,81 @@ MediaPlayer music;
                 default:
                     stars = 0;
             }
+            String data = readFromFile();
+            Log.d("HORARARARARARA : ","BAKAKAKAKAKKAKAKAK: "+data);
+            if(score < Integer.parseInt(data)){
+                writeToFile(score+"");
+                mTextViewBestScore.setVisibility(View.VISIBLE);
+            }else{
+                mTextViewBestScore.setVisibility(View.INVISIBLE);
+            }
+            Log.d("Best score : ","balalala is : "+data);
             Log.d("Score","Time is : "+time+" score is : "+score+" stars : "+stars);
             mRatingBar.setRating(stars);
         }else mRatingBar.setRating(0);
     }
+
+
+
+    private static void writeToFile(String data) {
+        FileOutputStream fos = null;
+        try {
+            fos = mContext.openFileOutput(FILE_NAME,MODE_PRIVATE);
+            fos.write(data.getBytes());
+//            OutputStreamWriter outputStreamWriter = new OutputStreamWriter(, MODE_PRIVATE));
+            //           outputStreamWriter.write(data);
+            //           outputStreamWriter.close();
+        }
+        catch (IOException e) {
+            Log.e("Exception", "File write failed: " + e.toString());
+        }finally {
+            if(fos != null){
+                try {
+                    fos.close();
+                }catch(IOException e){
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+
+
+    private static String readFromFile() {
+
+        FileInputStream fis = null;
+        try {
+
+            fis = mContext.openFileInput(FILE_NAME);
+            InputStreamReader isr = new InputStreamReader(fis);
+            BufferedReader br = new BufferedReader(isr);
+            String sb = "";
+            String  text;
+            while((text = br.readLine()) != null){
+                sb = text;
+            }
+            return sb;
+        }
+        catch (FileNotFoundException e) {
+            Log.e("login activity", "File not found: " + e.toString());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }finally{
+            if(fis != null){
+                try {
+                    fis.close();
+                }catch(IOException e){
+                    e.printStackTrace();
+                }
+            }
+        }
+        return null;
+    }
+
+
+
+
+
     @Override
     public void onDestroy() {
         super.onDestroy();
