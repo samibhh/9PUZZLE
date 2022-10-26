@@ -39,7 +39,6 @@ public class MainMenu extends AppCompatActivity {
         Button settings;
         Button exit;
 
-        //LOTTIE
 
 
 
