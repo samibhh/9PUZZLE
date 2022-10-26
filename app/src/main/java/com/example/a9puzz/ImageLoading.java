@@ -17,21 +17,26 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
+
+import com.airbnb.lottie.LottieAnimationView;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
 public class ImageLoading extends AppCompatActivity {
-public static ImageView myImage;
-public static ArrayList<Bitmap> parts;
-private   static   Bitmap currentBitmap = null;
+    public ImageView myImage;
+    public static ArrayList<Bitmap> parts;
+    private     Bitmap currentBitmap = null;
     static int COLUMNS;
     static int DIMENSION =COLUMNS*COLUMNS;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
 
         setContentView(R.layout.activity_main);
         if(Settings.difficulty==1) {
@@ -58,10 +63,27 @@ private   static   Bitmap currentBitmap = null;
         backward= findViewById(R.id.backward);
         myImage = findViewById(R.id.srcimage);
 
-
-
+        int[] images;
+        int[] football = new int[] {R.drawable.football01, R.drawable.football02};
+        int[] food = new int[] {R.drawable.food01, R.drawable.food02};
+        int[] landscape = new int[] {R.drawable.landscape01,R.drawable.landscape02,R.drawable.landscape03};
+        int[] anime = new int[] {R.drawable.image01, R.drawable.image02, R.drawable.image03, R.drawable.image04, R.drawable.image05};
 // Get a random between 0 and images.length-1
+        List <int[]> allPacks= Arrays.asList(food,anime,football,landscape);
+        if(Settings.indexCat!=0)
+        {
+            images=allPacks.get(Settings.indexCat-1);
+        }
+        else
+        {
+            int packId = (int)(Math.random() * Settings.categories.size()-1);
+            images=allPacks.get(packId);
+        }
 
+
+
+
+        int imageId = (int)(Math.random() * images.length);
 
 // Set the image
 
@@ -70,16 +92,64 @@ private   static   Bitmap currentBitmap = null;
 
         gallery.setOnClickListener(view -> {
             MainMenu.selectsfx.start();
-loadGallery();
-         Intent intent = new Intent(this, Starting.class);
+            Handler handler = new Handler();
+
+            String[] projection = new String[]{
+                    MediaStore.Images.Media.DATA,
+            };
+
+            Uri imagess = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
+            Cursor cur = managedQuery(imagess,
+                    projection,
+                    "",
+                    null,
+                    ""
+            );
+
+            final ArrayList<String> imagesPath = new ArrayList<String>();
+            if (cur.moveToFirst()) {
+
+                int dataColumn = cur.getColumnIndex(
+                        MediaStore.Images.Media.DATA);
+                do {
+                    imagesPath.add(cur.getString(dataColumn));
+                } while (cur.moveToNext());
+            }
+            cur.close();
+            final Random random = new Random();
+            final int count = imagesPath.size();
+
+
+            int number = random.nextInt(count);
+            String path = imagesPath.get(number);
+            Toast.makeText(getApplicationContext(), path, Toast.LENGTH_SHORT).show();
+            if (currentBitmap != null)
+                currentBitmap.recycle();
+            currentBitmap = BitmapFactory.decodeFile(path);
+
+
+            myImage.setImageBitmap(currentBitmap);
+
+
+
+
+
+
+            parts = splitImage(myImage,DIMENSION);
+            Intent intent = new Intent(this, Starting.class);
             startActivity(intent); });
 
 
         app.setOnClickListener(view -> {
+            MainMenu.selectsfx.start();
+            myImage.setImageResource(images[imageId]);
+            Log.d("DIMENSIOnnnN", String.valueOf(DIMENSION));
 
-            loadApp();
+            parts = splitImage(myImage, DIMENSION);
+            Log.d("PARTSS", String.valueOf(parts.size()));
             Intent intent = new Intent(this, Starting.class);
             startActivity(intent);
+
         });
 
         backward.setOnClickListener(view -> {
@@ -88,7 +158,12 @@ loadGallery();
             startActivity(intent);
             finish();
         });
-
+//Lottie
+        LottieAnimationView lottie;
+        RelativeLayout rl;
+        rl=findViewById(R.id.lay);
+        lottie=findViewById(R.id.lottie2);
+        pageChange(lottie,rl);
 
 
     }
@@ -134,67 +209,45 @@ loadGallery();
         return chunkedImages;
     }
 
-@Override
+    @Override
     public void onDestroy() {
         super.onDestroy();
 
     }
 
-   public static void loadApp(){
-        int[] images = new int[] {R.drawable.image01, R.drawable.image02, R.drawable.image03, R.drawable.image04, R.drawable.image05};
-        int imageId = (int)(Math.random() * images.length);
-        MainMenu.selectsfx.start();
-        myImage.setImageResource(images[imageId]);
-        Log.d("DIMENSIOnnnN", String.valueOf(DIMENSION));
 
-        parts = splitImage(myImage, DIMENSION);
-        Log.d("PARTSS", String.valueOf(parts.size()));
+    public  void pageChange(LottieAnimationView l,RelativeLayout rl)
+    {
+        rl.setAlpha(0);
+        l.setScale(4);
 
-    }
-
-    public void loadGallery(){
-        Handler handler = new Handler();
-
-        String[] projection = new String[]{
-                MediaStore.Images.Media.DATA,
-        };
-
-        Uri imagess = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
-        Cursor cur = managedQuery(imagess,
-                projection,
-                "",
-                null,
-                ""
-        );
-
-        final ArrayList<String> imagesPath = new ArrayList<String>();
-        if (cur.moveToFirst()) {
-
-            int dataColumn = cur.getColumnIndex(
-                    MediaStore.Images.Media.DATA);
-            do {
-                imagesPath.add(cur.getString(dataColumn));
-            } while (cur.moveToNext());
-        }
-        cur.close();
-        final Random random = new Random();
-        final int count = imagesPath.size();
+        l.bringToFront();
+        l.loop(false);
 
 
-        int number = random.nextInt(count);
-        String path = imagesPath.get(number);
-        if (currentBitmap != null)
-            currentBitmap.recycle();
-        currentBitmap = BitmapFactory.decodeFile(path);
+        l.playAnimation();
+        l.animate().scaleX(4).setDuration(0);
+        l.animate().scaleY(4).setDuration(0);
 
+        new Handler().postDelayed(new Runnable(){
+            @Override
+            public void run()
+            {
+                l.animate().alpha(0).setDuration(200);
+                rl.animate().alpha(1).setDuration(200);
 
-        myImage.setImageBitmap(currentBitmap);
+            }
+        },1400);
 
+        new Handler().postDelayed(new Runnable(){
+            @Override
+            public void run()
+            {
 
+                rl.animate().alpha(1).setDuration(200);
 
+            }
+        },1000);
 
-
-
-        parts = splitImage(myImage,DIMENSION);
     }
 }

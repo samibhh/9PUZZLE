@@ -8,13 +8,17 @@ import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.Arrays;
+import java.util.List;
+
 public class Settings extends AppCompatActivity {
-static float volumeValue=80;
-static int difficulty=1;
+    static float volumeValue=8;
+    static int difficulty=1;
     Button starter;
     Button average;
     Button genius;
@@ -22,6 +26,11 @@ static int difficulty=1;
     Button backward;
     Button save;
     TextView volume;
+    View next;
+    View prev;
+    TextView cat;
+    static int indexCat=0;
+    static List<String> categories = Arrays.asList("RANDOM","FOOD","ANIME","FOOTBALL","LANDSCAPE");
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -31,12 +40,14 @@ static int difficulty=1;
 
 
 
-         starter= findViewById(R.id.starter);
+        starter= findViewById(R.id.starter);
         average= findViewById(R.id.average);
-         genius= findViewById(R.id.genius);
+        genius= findViewById(R.id.genius);
         backward = findViewById(R.id.button8);
         save = findViewById(R.id.button7);
-
+        cat=findViewById(R.id.category);
+        next=findViewById(R.id.next);
+        prev=findViewById(R.id.prev);
         sound = findViewById(R.id.sound);
         volume= findViewById(R.id.volume);
 
@@ -58,15 +69,15 @@ static int difficulty=1;
         });
 
         starter.setOnClickListener(view -> {
-                    MainMenu.selectsfx.start();
-                    difficulty = 1;
+            MainMenu.selectsfx.start();
+            difficulty = 1;
             diff1();
-                });
+        });
 
         average.setOnClickListener(view -> {
             MainMenu.selectsfx.start();
 
-                difficulty=2;
+            difficulty=2;
             diff2();
 
 
@@ -81,14 +92,14 @@ static int difficulty=1;
 
         });
         sound.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-        @Override
+            @Override
             public void onProgressChanged(SeekBar seekBar,int progress,boolean b)
-        {
-            volume.setText(String.valueOf(progress*10)+"%");
-            volumeValue=progress;
+            {
+                volume.setText(String.valueOf(progress*10)+"%");
+                volumeValue=progress;
 
 
-        }
+            }
             @Override
             public void onStartTrackingTouch(SeekBar seekBar){
 
@@ -99,6 +110,33 @@ static int difficulty=1;
             }
         });
 
+
+
+
+        next.setOnClickListener(view -> {
+            if(indexCat>=categories.size()-1)
+                indexCat=0;
+
+            else
+            {
+                indexCat++;
+
+            }
+            cat.setText(categories.get(indexCat));
+
+        });
+
+
+        prev.setOnClickListener(view -> {
+            if(indexCat>0) {
+                indexCat--;
+
+            }
+            else
+                indexCat=categories.size()-1;
+
+            cat.setText(categories.get(indexCat));
+        });
 
     }
     private void diff1(){
@@ -136,7 +174,6 @@ static int difficulty=1;
         super.onDestroy();
 
     }
-
 
 
 }

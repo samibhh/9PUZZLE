@@ -10,8 +10,11 @@ import android.graphics.Paint;
 import android.media.Image;
 import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.os.Handler;
 import android.widget.Button;
 import android.widget.ImageView;
+
+import com.airbnb.lottie.LottieAnimationView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,6 +26,7 @@ public class MainMenu extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         int maxVolume = 50;
+
         mp = MediaPlayer.create(this, R.raw.button);
         selectsfx = MediaPlayer.create(this, R.raw.select);
         mp.setVolume(10,10);
@@ -34,9 +38,16 @@ public class MainMenu extends AppCompatActivity {
         Button play;
         Button settings;
         Button exit;
+
+        //LOTTIE
+
+
+
+
         play = findViewById(R.id.play);
         settings = findViewById(R.id.settings);
         exit= findViewById(R.id.exit);
+
 
         play.setOnClickListener(view -> {
             mp.start();
@@ -53,6 +64,9 @@ public class MainMenu extends AppCompatActivity {
             finish();
         });
 
+
+
+
     }
 
     @Override
@@ -60,6 +74,7 @@ public class MainMenu extends AppCompatActivity {
         super.onDestroy();
 
     }
+
 
 
 }
