@@ -14,6 +14,12 @@
         tools:context="com.example.a9puzz.MainActivity">
 
     </com.example.a9puzz.GestureDetectGridView>
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/congratz"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:lottie_rawRes="@raw/congratz"
+        tools:ignore="MissingConstraints" />
 
     <RelativeLayout
         android:id="@+id/pauselock"
@@ -31,6 +37,7 @@
             android:id="@+id/text_moves"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:fontFamily="@font/segoeuib"
             android:text="0 MOVES"
             android:textColor="#fca50f"
             android:textSize="30dp" />
@@ -40,6 +47,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
+            android:fontFamily="@font/segoeuib"
             android:gravity="right"
             android:text="01:00"
             android:textColor="@android:color/holo_red_light"
@@ -64,8 +72,7 @@
                 android:id="@+id/newscore"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:fontFamily="@font/noto_sans_bold"
-                android:gravity="center"
+                android:fontFamily="@font/segoeuib"                android:gravity="center"
                 android:text="NEW HIGH SCORE"
                 android:textColor="#f55200"
                 android:textSize="22dp"
@@ -75,8 +82,7 @@
                 android:id="@+id/textwon"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:fontFamily="@font/noto_sans_bold"
-                android:gravity="center"
+                android:fontFamily="@font/segoeuib"                android:gravity="center"
                 android:text="YOU WON !!"
                 android:textColor="#fca50f"
                 android:textSize="40dp" />

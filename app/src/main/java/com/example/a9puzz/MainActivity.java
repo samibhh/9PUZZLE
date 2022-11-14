@@ -1,62 +1,43 @@
 package com.example.a9puzz;
-import java.io.InputStream;
-import android.annotation.SuppressLint;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.Point;
 import android.graphics.drawable.BitmapDrawable;
 import android.media.MediaPlayer;
-import android.net.Uri;
 import android.os.Bundle;
 
-import com.google.android.material.snackbar.Snackbar;
+import com.airbnb.lottie.LottieAnimationView;
 
 import java.io.InputStreamReader;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.os.Handler;
 import android.view.View;
 import android.content.Context;
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
-import androidx.navigation.ui.AppBarConfiguration;
-import androidx.navigation.ui.NavigationUI;
 
-import com.example.a9puzz.databinding.ActivityMainBinding;
+import androidx.navigation.ui.AppBarConfiguration;
+
+//import com.example.a9puzz.databinding.ActivityMainBinding;
 
 
 import android.view.ViewTreeObserver;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.Toast;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Locale;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.logging.Logger;
 
 import kotlin.random.Random;
-import android.widget.LinearLayout;
+
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.os.CountDownTimer;
 import android.util.Log;
-import android.os.CountDownTimer;
-import android.util.Log;
-import android.widget.VideoView;
 
 public class MainActivity<ActivityMainBinding> extends AppCompatActivity {
     private static Context mContext;
@@ -73,6 +54,7 @@ public class MainActivity<ActivityMainBinding> extends AppCompatActivity {
 
 
     private static  long START_TIME_IN_MILLIS;
+    private static LottieAnimationView congratz;
     private TextView mTextViewCountDown;
     private static TextView mTextViewWinLose;
     private static Button mButtonAgain;
@@ -93,8 +75,8 @@ public class MainActivity<ActivityMainBinding> extends AppCompatActivity {
     public static final String down = "down";
     public static final String left = "left";
     public static final String right = "right";
-MediaPlayer music;
-
+    public MediaPlayer music;
+    public static MediaPlayer musicEffect;
     private AppBarConfiguration appBarConfiguration;
     private ActivityMainBinding binding;
     static int COLUMNS=3;
@@ -119,6 +101,10 @@ MediaPlayer music;
 
          mContext = getApplicationContext();
         mTextViewBestScore = findViewById(R.id.newscore);
+       congratz = findViewById(R.id.congratz);
+        congratz.animate().scaleX(4).setDuration(0);
+        congratz.animate().scaleY(4).setDuration(0);
+       congratz.bringToFront();
 
 
        //writeToFile("999");
@@ -182,6 +168,7 @@ MediaPlayer music;
                 finish();
             }
         });
+
 
 
     }
@@ -294,11 +281,15 @@ MediaPlayer music;
             countTries++;
             mTextViewMoves.setText(countTries+" MOVES");
             if (isSolved()){
+                playCongrats(MainActivity.congratz);
                 mTextViewWinLose.setText("YOU WIN !!");
                 mTextViewWinLose.setTextColor(Color.parseColor("#ffa408"));
                 activeGrid = false;
                 //mGridView.setBackgroundColor(Color.parseColor("#70000000"));
                 scoreCalcul(true);
+                musicEffect = MediaPlayer.create(mContext, R.raw.success);
+                musicEffect.setVolume(Settings.volumeValue,Settings.volumeValue);
+                musicEffect.start();
                 mPauseLock.setVisibility(View.VISIBLE);
                 mTimeWinLose.setVisibility(View.VISIBLE);
                 Toast.makeText(context, "YOU WIN!", Toast.LENGTH_SHORT).show();
@@ -395,6 +386,13 @@ MediaPlayer music;
     private void updateCountDownText(){
         int minutes = (int) (mTimeLeftInMillis /1000 )/ 60;
         int seconds = (int) (mTimeLeftInMillis /1000 ) % 60;
+        if(seconds == 13 && minutes==0 &&  mTimerRunning){
+            musicEffect = MediaPlayer.create(MainActivity.this, R.raw.timer);
+            music.setVolume(Settings.volumeValue - 20,Settings.volumeValue-20);
+            musicEffect.setVolume(Settings.volumeValue,Settings.volumeValue);
+            musicEffect.setVolume(Settings.volumeValue+15,Settings.volumeValue+15);
+            musicEffect.start();
+        }
         Log.d("MyApp","seconds are : "+seconds);
         String timeLeftFormatted = String.format(Locale.getDefault(),"%02d:%02d",minutes,seconds);
         mTextViewCountDown.setText(timeLeftFormatted);
@@ -413,10 +411,14 @@ MediaPlayer music;
                 mTimeLeftInMillis = 0;
                 updateCountDownText();
                 mTimerRunning = false;
+
                 mTextViewWinLose.setText("YOU LOSE !!");
                 mTextViewWinLose.setTextColor(Color.parseColor("#ff3d08"));
                 activeGrid = false;
                 mRatingBar.setRating(0);
+                musicEffect = MediaPlayer.create(MainActivity.this, R.raw.lose);
+                musicEffect.setVolume(Settings.volumeValue,Settings.volumeValue);
+                musicEffect.start();
                 mPauseLock.setVisibility(View.VISIBLE);
                 //mGridView.setBackgroundColor(Color.parseColor("#70000000"));
               //  mTextViewWinLose.setTextColor(getResources().getColor(com.google.android.material.R.color.material_dynamic_primary0));
@@ -598,7 +600,15 @@ MediaPlayer music;
         return null;
     }
 
+static void playCongrats(LottieAnimationView congratz)
+{
 
+
+    //lottie.loop(true);
+    congratz.setVisibility(View.VISIBLE);
+    congratz.playAnimation();
+
+}
 
 
 

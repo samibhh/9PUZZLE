@@ -88,7 +88,14 @@ public class ImageLoading extends AppCompatActivity {
 // Set the image
 
 
+        LottieAnimationView lottieBG;
 
+        lottieBG=findViewById(R.id.lottieBG2);
+        lottieBG.animate().scaleX(1).setDuration(0);
+        lottieBG.animate().scaleY(1).setDuration(0);
+        lottieBG.setAlpha(80);
+        lottieBG.loop(true);
+        lottieBG.playAnimation();
 
         gallery.setOnClickListener(view -> {
             MainMenu.selectsfx.start();

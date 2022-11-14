@@ -13,6 +13,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
+import android.widget.VideoView;
 
 import com.airbnb.lottie.LottieAnimationView;
 
@@ -31,6 +33,7 @@ public class MainMenu extends AppCompatActivity {
         selectsfx = MediaPlayer.create(this, R.raw.select);
         mp.setVolume(10,10);
         selectsfx.setVolume(10,10);
+//LOTTIEE
 
 
 
@@ -40,6 +43,16 @@ public class MainMenu extends AppCompatActivity {
         Button exit;
 
 
+
+
+        LottieAnimationView lottie;
+
+        lottie=findViewById(R.id.lottieBG);
+        lottie.animate().scaleX(1).setDuration(0);
+        lottie.animate().scaleY(1).setDuration(0);
+        lottie.setAlpha(80);
+        lottie.loop(true);
+        lottie.playAnimation();
 
 
 
@@ -73,6 +86,9 @@ public class MainMenu extends AppCompatActivity {
         super.onDestroy();
 
     }
+
+
+
 
 
 

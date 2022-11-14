@@ -28,7 +28,7 @@ public class Settings extends AppCompatActivity {
     TextView volume;
     View next;
     View prev;
-    TextView cat;
+    static TextView cat;
     static int indexCat=0;
     static List<String> categories = Arrays.asList("RANDOM","FOOD","ANIME","FOOTBALL","LANDSCAPE");
     @Override
@@ -110,7 +110,7 @@ public class Settings extends AppCompatActivity {
             }
         });
 
-
+        cat.setText(categories.get(indexCat));
 
 
         next.setOnClickListener(view -> {
@@ -136,6 +136,7 @@ public class Settings extends AppCompatActivity {
                 indexCat=categories.size()-1;
 
             cat.setText(categories.get(indexCat));
+
         });
 
     }
@@ -165,8 +166,8 @@ public class Settings extends AppCompatActivity {
         if(difficulty==3)
             diff3();
 
-        sound.setProgress((int)(volumeValue/10));
-        volume.setText(String.valueOf((int)volumeValue)+"%");
+        sound.setProgress((int)(volumeValue));
+        volume.setText(String.valueOf((int)volumeValue*10)+"%");
     }
 
     @Override

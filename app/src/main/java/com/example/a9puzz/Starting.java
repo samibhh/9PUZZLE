@@ -28,6 +28,7 @@ public class Starting extends AppCompatActivity {
 
         lottie=findViewById(R.id.lottie);
 
+
         //end lottie
 
         VideoView startingcounter = (VideoView) findViewById(R.id.textView123);

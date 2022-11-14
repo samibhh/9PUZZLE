@@ -1,16 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".MainMenu">
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/lottieBG"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:lottie_rawRes="@raw/menubg"
+        tools:ignore="MissingConstraints" />
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:layout_editor_absoluteX="0dp"
-        tools:layout_editor_absoluteY="45dp">
+        tools:layout_editor_absoluteY="45dp"
+        android:id="@+id/layerr"
+        >
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/play"
@@ -64,7 +71,7 @@
             android:layout_alignParentEnd="true"
             android:layout_marginEnd="98dp"
 
-            android:background="#FFFFFF"
+            android:background="#E8FFFFFF"
             app:srcCompat="@drawable/logo" />
 
         <ImageView
@@ -95,4 +102,4 @@
 
 
     </RelativeLayout>
-</androidx.constraintlayout.widget.ConstraintLayout>
+</RelativeLayout>
