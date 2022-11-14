@@ -13,22 +13,45 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
+
+import com.airbnb.lottie.LottieAnimationView;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
 public class ImageLoading extends AppCompatActivity {
-public ImageView myImage;
-public static ArrayList<Bitmap> parts;
-private     Bitmap currentBitmap = null;
+    public ImageView myImage;
+    public static ArrayList<Bitmap> parts;
+    private     Bitmap currentBitmap = null;
+    static int COLUMNS;
+    static int DIMENSION =COLUMNS*COLUMNS;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+
+        setContentView(R.layout.activity_main);
+        if(Settings.difficulty==1) {
+            COLUMNS = 3;
+            DIMENSION = COLUMNS * COLUMNS;
+        }
+        if(Settings.difficulty==2) {
+            COLUMNS = 3;
+            DIMENSION = COLUMNS * COLUMNS;
+        }
+
+        if(Settings.difficulty==3) {
+            COLUMNS = 9;
+            DIMENSION = COLUMNS * COLUMNS;
+        }
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_image_loading);
         int SELECT_IMAGE_CODE=1;
@@ -40,10 +63,26 @@ private     Bitmap currentBitmap = null;
         backward= findViewById(R.id.backward);
         myImage = findViewById(R.id.srcimage);
 
-        int[] images = new int[] {R.drawable.image01, R.drawable.image02, R.drawable.image03, R.drawable.image04, R.drawable.image05};
-
-
+        int[] images;
+        int[] football = new int[] {R.drawable.football01, R.drawable.football02};
+        int[] food = new int[] {R.drawable.food01, R.drawable.food02};
+        int[] landscape = new int[] {R.drawable.landscape01,R.drawable.landscape02,R.drawable.landscape03};
+        int[] anime = new int[] {R.drawable.image01, R.drawable.image02, R.drawable.image03, R.drawable.image04, R.drawable.image05};
 // Get a random between 0 and images.length-1
+        List <int[]> allPacks= Arrays.asList(food,anime,football,landscape);
+        if(Settings.indexCat!=0)
+        {
+            images=allPacks.get(Settings.indexCat-1);
+        }
+        else
+        {
+            int packId = (int)(Math.random() * Settings.categories.size()-1);
+            images=allPacks.get(packId);
+        }
+
+
+
+
         int imageId = (int)(Math.random() * images.length);
 
 // Set the image
@@ -52,9 +91,8 @@ private     Bitmap currentBitmap = null;
 
 
         gallery.setOnClickListener(view -> {
-
+            MainMenu.selectsfx.start();
             Handler handler = new Handler();
-
 
             String[] projection = new String[]{
                     MediaStore.Images.Media.DATA,
@@ -82,36 +120,50 @@ private     Bitmap currentBitmap = null;
             final int count = imagesPath.size();
 
 
-                    int number = random.nextInt(count);
-                    String path = imagesPath.get(number);
-                    Toast.makeText(getApplicationContext(), path, Toast.LENGTH_SHORT).show();
-                    if (currentBitmap != null)
-                        currentBitmap.recycle();
-                    currentBitmap = BitmapFactory.decodeFile(path);
+            int number = random.nextInt(count);
+            String path = imagesPath.get(number);
+            Toast.makeText(getApplicationContext(), path, Toast.LENGTH_SHORT).show();
+            if (currentBitmap != null)
+                currentBitmap.recycle();
+            currentBitmap = BitmapFactory.decodeFile(path);
 
 
-                    myImage.setImageBitmap(currentBitmap);
-
-
-
+            myImage.setImageBitmap(currentBitmap);
 
 
 
-            parts = splitImage(myImage, 9);
-         Intent intent = new Intent(this, MainActivity.class);
+
+
+
+            parts = splitImage(myImage,DIMENSION);
+            Intent intent = new Intent(this, Starting.class);
             startActivity(intent); });
 
-        app.setOnClickListener(view -> {
-            myImage.setImageResource(images[imageId]);
-             parts = splitImage(myImage, 9);
-            Intent intent = new Intent(this, MainActivity.class);
-            startActivity(intent);});
 
-        backward.setOnClickListener(view -> {
-            Intent intent = new Intent(this, MainMenu.class);
+        app.setOnClickListener(view -> {
+            MainMenu.selectsfx.start();
+            myImage.setImageResource(images[imageId]);
+            Log.d("DIMENSIOnnnN", String.valueOf(DIMENSION));
+
+            parts = splitImage(myImage, DIMENSION);
+            Log.d("PARTSS", String.valueOf(parts.size()));
+            Intent intent = new Intent(this, Starting.class);
             startActivity(intent);
+
         });
 
+        backward.setOnClickListener(view -> {
+            MainMenu.mp.start();
+            Intent intent = new Intent(this, MainMenu.class);
+            startActivity(intent);
+            finish();
+        });
+//Lottie
+        LottieAnimationView lottie;
+        RelativeLayout rl;
+        rl=findViewById(R.id.lay);
+        lottie=findViewById(R.id.lottie2);
+        pageChange(lottie,rl);
 
 
     }
@@ -157,11 +209,45 @@ private     Bitmap currentBitmap = null;
         return chunkedImages;
     }
 
-
+    @Override
     public void onDestroy() {
         super.onDestroy();
 
     }
 
 
+    public  void pageChange(LottieAnimationView l,RelativeLayout rl)
+    {
+        rl.setAlpha(0);
+        l.setScale(4);
+
+        l.bringToFront();
+        l.loop(false);
+
+
+        l.playAnimation();
+        l.animate().scaleX(4).setDuration(0);
+        l.animate().scaleY(4).setDuration(0);
+
+        new Handler().postDelayed(new Runnable(){
+            @Override
+            public void run()
+            {
+                l.animate().alpha(0).setDuration(200);
+                rl.animate().alpha(1).setDuration(200);
+
+            }
+        },1400);
+
+        new Handler().postDelayed(new Runnable(){
+            @Override
+            public void run()
+            {
+
+                rl.animate().alpha(1).setDuration(200);
+
+            }
+        },1000);
+
+    }
 }

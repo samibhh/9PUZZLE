@@ -40,25 +40,16 @@
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             android:layout_alignParentBottom="true"
-            android:layout_marginEnd="142dp"
-            android:layout_marginBottom="111dp"
-            android:text="Dark Mode"
+            android:layout_marginEnd="163dp"
+            android:layout_marginBottom="135dp"
+            android:text="Category"
             android:textAlignment="center"
             android:textColor="#8B348B"
             android:textSize="20sp"
             android:textStyle="normal" />
 
-        <Switch
-            android:id="@+id/switch1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_marginEnd="12dp"
-            android:layout_marginBottom="110dp"
-            android:layout_toStartOf="@+id/textView3" />
-
         <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/button4"
+            android:id="@+id/starter"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
@@ -73,7 +64,7 @@
             android:textColor="#8B348B" />
 
         <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/button5"
+            android:id="@+id/average"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
@@ -85,7 +76,7 @@
             android:textColor="#8B348B" />
 
         <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/button6"
+            android:id="@+id/genius"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
@@ -157,6 +148,46 @@
             android:layout_marginEnd="93dp"
             android:layout_marginBottom="-30dp"
             android:text="100%" />
+
+        <TextView
+            android:id="@+id/category"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginStart="156dp"
+            android:layout_marginEnd="155dp"
+            android:layout_marginBottom="98dp"
+            android:gravity="center"
+            android:text="RANDOM"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <ImageButton
+            android:id="@+id/next"
+            android:layout_width="38dp"
+            android:layout_height="27dp"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginStart="260dp"
+            android:layout_marginEnd="113dp"
+            android:layout_marginBottom="94dp"
+            android:backgroundTint="#00FFFFFF"
+            app:srcCompat="@android:drawable/ic_media_play" />
+
+        <ImageButton
+            android:id="@+id/prev"
+            android:layout_width="38dp"
+            android:layout_height="27dp"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginStart="113dp"
+            android:layout_marginBottom="94dp"
+            android:backgroundTint="#00FFFFFF"
+            android:rotationY="180"
+            app:srcCompat="@android:drawable/ic_media_play" />
 
 
     </RelativeLayout>
