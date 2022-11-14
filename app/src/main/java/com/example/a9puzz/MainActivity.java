@@ -121,7 +121,7 @@ MediaPlayer music;
         mTextViewBestScore = findViewById(R.id.newscore);
 
 
-       // writeToFile("999");
+       //writeToFile("999");
         String data = readFromFile();
         if(data == "") writeToFile("999");
 
@@ -172,6 +172,10 @@ MediaPlayer music;
         mButtonExit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                mPauseLock.setEnabled(false);
+                mTimeWinLose.setEnabled(false);
+                activeGrid=true;
+                countTries=0;
                 Intent intent = new Intent(getApplicationContext(),ImageLoading.class);
 
                 startActivity(intent);
@@ -423,23 +427,24 @@ MediaPlayer music;
 }.start();
         mTimerRunning = true;
     }
-
+/*
     private void resetTimer(){
         mTimeLeftInMillis = START_TIME_IN_MILLIS;
         updateCountDownText();
     }
-
+*/
 
     private static void pauseTimer(){
         mCountDownTimer.cancel();
         mTimerRunning = false;
     }
+    /*
     private void resetTimerMoves(){
         mTimeLeftInMillis = START_TIME_IN_MILLIS;
         countTries = 0;
         mTextViewMoves.setText(countTries+" MOVES");
         updateCountDownText();
-    }
+    }*/
     private static void scoreCalcul(boolean check){
         if(check){
             int minutes = (int) (mTimeLeftInMillis /1000 )/ 60;
@@ -494,8 +499,14 @@ MediaPlayer music;
     {
 
   //  ImageLoading.loadApp();
+        mPauseLock.setEnabled(false);
+        mTimeWinLose.setEnabled(false);
+        activeGrid=true;
+        countTries=0;
+        finish();
         Intent intent = new Intent(this, Starting.class);
         startActivity(intent);
+
 
 
     }
@@ -512,8 +523,8 @@ MediaPlayer music;
 
         mButtonAgain.setOnClickListener(view ->
         {
-            music.stop();
 
+            music.stop();
             playAgain();
 
 
@@ -528,7 +539,7 @@ MediaPlayer music;
 
 
 
-
+    //*******************************SCORE MANAGEMENT***************************************************
 
     private static void writeToFile(String data) {
         FileOutputStream fos = null;
@@ -551,6 +562,8 @@ MediaPlayer music;
             }
         }
     }
+
+
 
 
 
