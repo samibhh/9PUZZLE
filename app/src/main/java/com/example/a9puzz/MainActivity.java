@@ -93,8 +93,8 @@ public class MainActivity<ActivityMainBinding> extends AppCompatActivity {
     public static final String down = "down";
     public static final String left = "left";
     public static final String right = "right";
-MediaPlayer music;
-
+    public MediaPlayer music;
+    public static MediaPlayer musicEffect;
     private AppBarConfiguration appBarConfiguration;
     private ActivityMainBinding binding;
     static int COLUMNS=3;
@@ -121,7 +121,7 @@ MediaPlayer music;
         mTextViewBestScore = findViewById(R.id.newscore);
 
 
-       //writeToFile("999");
+       writeToFile("999");
         String data = readFromFile();
         if(data == "") writeToFile("999");
 
@@ -147,7 +147,7 @@ MediaPlayer music;
 
         startTimer();
 
-        music = MediaPlayer.create(getApplicationContext(), R.raw.musicbg);
+        //music = MediaPlayer.create(getApplicationContext(), R.raw.musicbg);
 
 
         init();
@@ -299,6 +299,9 @@ MediaPlayer music;
                 activeGrid = false;
                 //mGridView.setBackgroundColor(Color.parseColor("#70000000"));
                 scoreCalcul(true);
+                musicEffect = MediaPlayer.create(mContext, R.raw.success);
+                musicEffect.setVolume(Settings.volumeValue,Settings.volumeValue);
+                musicEffect.start();
                 mPauseLock.setVisibility(View.VISIBLE);
                 mTimeWinLose.setVisibility(View.VISIBLE);
                 Toast.makeText(context, "YOU WIN!", Toast.LENGTH_SHORT).show();
@@ -395,6 +398,12 @@ MediaPlayer music;
     private void updateCountDownText(){
         int minutes = (int) (mTimeLeftInMillis /1000 )/ 60;
         int seconds = (int) (mTimeLeftInMillis /1000 ) % 60;
+        if(seconds == 13){
+            musicEffect = MediaPlayer.create(MainActivity.this, R.raw.timer);
+            music.setVolume(Settings.volumeValue - 20,Settings.volumeValue-20);
+            musicEffect.setVolume(Settings.volumeValue,Settings.volumeValue);
+            musicEffect.start();
+        }
         Log.d("MyApp","seconds are : "+seconds);
         String timeLeftFormatted = String.format(Locale.getDefault(),"%02d:%02d",minutes,seconds);
         mTextViewCountDown.setText(timeLeftFormatted);
@@ -417,6 +426,9 @@ MediaPlayer music;
                 mTextViewWinLose.setTextColor(Color.parseColor("#ff3d08"));
                 activeGrid = false;
                 mRatingBar.setRating(0);
+                musicEffect = MediaPlayer.create(MainActivity.this, R.raw.lose);
+                musicEffect.setVolume(Settings.volumeValue,Settings.volumeValue);
+                musicEffect.start();
                 mPauseLock.setVisibility(View.VISIBLE);
                 //mGridView.setBackgroundColor(Color.parseColor("#70000000"));
               //  mTextViewWinLose.setTextColor(getResources().getColor(com.google.android.material.R.color.material_dynamic_primary0));
